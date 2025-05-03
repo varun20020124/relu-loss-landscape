@@ -12,7 +12,7 @@ class ShallowReLU(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
-        Forward pass: applies ReLU to hidden layer, then linear output.
+        Forward pass: applies ReLU to hidden layer, then produces a scalar output.
         """
         x = self.hidden_layer(x)
         x = torch.relu(x)
