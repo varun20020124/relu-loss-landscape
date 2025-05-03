@@ -17,8 +17,7 @@ class SyntheticDatasetBuilder:
                  noise: float = 0.1,
                  test_size: float = 0.2,
                  random_state: int = 42):
-        assert dataset_type in ("blobs", "circles", "moons"), \\
-            "dataset_type must be one of 'blobs','circles','moons'"
+        assert dataset_type in ("blobs", "circles", "moons"), "dataset_type must be one of 'blobs','circles','moons'"
         self.dataset_type = dataset_type
         self.n_samples = n_samples
         self.noise = noise
