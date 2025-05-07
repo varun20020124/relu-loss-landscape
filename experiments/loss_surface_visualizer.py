@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 class LossSurfaceVisualizer:
     """
@@ -83,4 +84,30 @@ class LossSurfaceVisualizer:
         plt.xlabel(self.param1_name)
         plt.ylabel(self.param2_name)
         plt.title("Loss Surface Contour")
+        plt.show()
+    
+    def plot_surface3d(self, elev=35, azim=-60):
+        """
+        3‑D surface plot of the loss grid.
+        Call sweep_2d() first.
+        Parameters
+        ----------
+        elev, azim : view angles for Matplotlib (degrees)
+        """
+        if self.loss_grid is None:
+            raise RuntimeError("Call sweep_2d before plot_surface3d!")
+
+        g1, g2 = self.grid
+        Xg, Yg = np.meshgrid(g1, g2)
+
+        fig = plt.figure(figsize=(6, 4))
+        ax = fig.add_subplot(111, projection="3d")
+        ax.plot_surface(Xg, Yg, self.loss_grid,
+                        cmap="viridis", linewidth=0, antialiased=True)
+        ax.set_xlabel(self.param1_name)
+        ax.set_ylabel(self.param2_name)
+        ax.set_zlabel("Loss")
+        ax.set_title("Loss Surface (3‑D view)")
+        ax.view_init(elev=elev, azim=azim)  # adjustable camera angle
+        plt.tight_layout()
         plt.show()
