@@ -11,6 +11,13 @@ class GradientAnalyzer:
         self.loss_fn = loss_fn
         self.X = X
         self.y = y
+    
+    def compute_condition_number(self, H: np.ndarray):
+        eigs = np.linalg.eigvalsh(H)
+        min_eig = np.min(np.abs(eigs))  # Avoid division by zero
+        if min_eig < 1e-8:
+            return np.inf  # Ill-conditioned matrix
+        return np.max(np.abs(eigs)) / min_eig
 
     def compute_gradient(self):
         """
@@ -76,11 +83,32 @@ class GradientAnalyzer:
         plt.ylabel("|Gradient|")
         plt.show()
 
+    # def plot_hessian_spectrum(self, H: np.ndarray):
+    #     eigs = np.linalg.eigvalsh(H)
+    #     plt.plot(np.sort(eigs)[::-1], marker='o')
+    #     plt.title("Hessian Eigenvalues")
+    #     plt.xlabel("Index")
+    #     plt.ylabel("Eigenvalue")
+    #     plt.grid(True)
+    #     plt.show()
     def plot_hessian_spectrum(self, H: np.ndarray):
         eigs = np.linalg.eigvalsh(H)
+        
+        # Filter out near-zero eigenvalues to avoid numerical instability
+        eigs_positive = eigs[eigs > 1e-6]
+        
+        if len(eigs_positive) == 0:
+            kappa = float('inf')
+        else:
+            kappa = eigs_positive.max() / eigs_positive.min()
+        
+        # Plot eigenvalues
         plt.plot(np.sort(eigs)[::-1], marker='o')
-        plt.title("Hessian Eigenvalues")
+        plt.title(f"Hessian Eigenvalues (κ ≈ {kappa:.2f})")
         plt.xlabel("Index")
         plt.ylabel("Eigenvalue")
         plt.grid(True)
         plt.show()
+        
+        print(f"Condition number (κ): {kappa:.2f}")
+
